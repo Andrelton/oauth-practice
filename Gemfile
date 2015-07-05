@@ -1,9 +1,11 @@
 source "https://rubygems.org"
 
 gem 'sinatra'
-gem 'shotgun'
-gem 'dotenv'
-
 gem 'oauth2'
+gem 'httparty'
+gem 'activesupport'
 
-gem 'pry-debugger'
+  gem 'shotgun'
+  gem 'dotenv'
+  gem 'pry-debugger'
+
