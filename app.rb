@@ -12,13 +12,13 @@ set :session_secret, '9a103qhdkb03nht9dy2jig9js'
 # ENV['GITHUB_CLIENT_SECRET']
 
 helpers do
-  def github_client
-    @github_client ||= OAuth2::Client.new(
-      ENV['GITHUB_CLIENT_ID'],
-      ENV['GITHUB_CLIENT_SECRET'],
-      site: 'https://github.com/login'
-    )
-  end
+  # def github_client
+  #   @github_client ||= OAuth2::Client.new(
+  #     ENV['GITHUB_CLIENT_ID'],
+  #     ENV['GITHUB_CLIENT_SECRET'],
+  #     site: 'https://github.com/login'
+  #   )
+  # end
 
   def get_github_user_info
     github_user_info = HTTParty.get(
@@ -48,15 +48,16 @@ get '/' do
 end
 
 get '/login-via-github' do
-  authorize_url = github_client.auth_code.authorize_url(
-    redirect_uri: 'http://localhost:9393/oauth/callback'
-  )
+  # From oauth2 gem:
+  # authorize_url = github_client.auth_code.authorize_url(
+  #   redirect_uri: 'http://localhost:9393/oauth/callback'
+  # )
 
-  authorize_url = URI.parse(authorize_url)
-  authorize_url.path = '/login/oauth/authorize'
-  authorize_url = authorize_url.to_s
+  # authorize_url = URI.parse(authorize_url)
+  # authorize_url.path = '/login/oauth/authorize'
+  # authorize_url = authorize_url.to_s
 
-  redirect authorize_url
+  # redirect authorize_url
 
   # THIS ALSO WORKS
   # base_url = 'https://github.com/login/oauth/authorize'
@@ -64,6 +65,12 @@ get '/login-via-github' do
   # ^^^ could form the above with active_support's #to_query
 
   # redirect authorize_url
+  authorize_url = URI.parse('https://github.com/login/oauth/authorize')
+  authorize_url.query = Rack::Utils.build_query(
+    client_id: ENV['GITHUB_CLIENT_ID']
+  )
+
+  redirect authorize_url.to_s
 
 end
 
@@ -78,9 +85,6 @@ get '/oauth/callback' do
       client_secret: ENV['GITHUB_CLIENT_SECRET'],
       code: code
     })
-
-  p response
-  binding.pry
 
   response = Rack::Utils.parse_query(response.body)
   access_token = response["access_token"]
