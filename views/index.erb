@@ -1,1 +1,8 @@
-<a href="/login-via-github">Login Via Github</a>
+<textarea><%= session.inspect %></textarea>
+
+<% if logged_in? %>
+  <h1>Welcome back <%= user_info["name"].split.first %>!</h1>
+  <a href="/logout">Logout</a>
+<% else %>
+  <a href="/login-via-github">Login with Github</a>
+<% end %>
